@@ -1,0 +1,1715 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Minecraft World — твой мир, твои правила</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Crect%20width='16'%20height='16'%20fill='%232E7D32'/%3E%3Crect%20x='0'%20y='0'%20width='8'%20height='8'%20fill='%235D4037'/%3E%3Crect%20x='8'%20y='8'%20width='8'%20height='8'%20fill='%235D4037'/%3E%3Crect%20x='8'%20y='0'%20width='8'%20height='8'%20fill='%237CB342'/%3E%3Crect%20x='0'%20y='8'%20width='8'%20height='8'%20fill='%237CB342'/%3E%3C/svg%3E">
+  <style>
+    /* ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---------- */
+    :root {
+      --dark-green: #2E7D32;
+      --rich-green: #388E3C;
+      --grass-green: #7CB342;
+      --brown: #5D4037;
+      --dark-bg: #1E1E1E;
+      --alt-bg: #263238;
+      --gold: #FFC107;
+      --emerald: #00E676;
+      --text-main: #F1F1F1;
+      --text-secondary: #BDBDBD;
+      --card-bg: #2A2A2A;
+      --border-light: #3E4A3E;
+      --shadow-block: 4px 4px 0 rgba(0, 0, 0, 0.5);
+      --font-pixel: 'Courier New', 'Lucida Console', monospace;
+      --font-body: system-ui, -apple-system, 'Segoe UI', Arial, Verdana, sans-serif;
+    }
+
+    /* ---------- СБРОС И БАЗА ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 76px; /* чтобы фиксированная шапка не перекрывала заголовки */
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      background-image: 
+        linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+        linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1a1a1a 75%),
+        linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      overflow-x: hidden;
+    }
+
+    /* ---------- УТИЛИТЫ ---------- */
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .section {
+      padding: 48px 0;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .section-title {
+      font-family: var(--font-pixel);
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--grass-green);
+      text-shadow: 3px 3px 0 #0a1a0a;
+      margin-bottom: 24px;
+      border-left: 6px solid var(--emerald);
+      padding-left: 16px;
+    }
+
+    /* ---------- КНОПКИ ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-pixel);
+      font-size: 1rem;
+      padding: 12px 24px;
+      border: 2px solid #000;
+      border-radius: 2px;
+      background: var(--rich-green);
+      color: #fff;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: var(--shadow-block);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-weight: bold;
+      text-shadow: 2px 2px 0 #00000080;
+      min-height: 48px;
+      touch-action: manipulation;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--grass-green);
+      border-color: var(--gold);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
+      outline: none;
+    }
+
+    .btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+    }
+
+    .btn--gold {
+      background: var(--gold);
+      color: #1E1E1E;
+      text-shadow: none;
+      border-color: #5D4037;
+    }
+    .btn--gold:hover,
+    .btn--gold:focus-visible {
+      background: #FFD54F;
+    }
+
+    .btn--outline {
+      background: transparent;
+      border: 2px solid var(--grass-green);
+      color: var(--grass-green);
+      box-shadow: none;
+    }
+    .btn--outline:hover,
+    .btn--outline:focus-visible {
+      background: var(--grass-green);
+      color: #111;
+    }
+
+    /* ---------- ШАПКА ---------- */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #1a1f1a;
+      border-bottom: 4px solid var(--dark-green);
+      box-shadow: 0 4px 0 #0a0f0a;
+      padding: 8px 0;
+    }
+
+    .header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo__icon {
+      width: 44px;
+      height: 44px;
+      background: var(--grass-green);
+      border: 3px solid var(--brown);
+      box-shadow: inset -4px -4px 0 #1a3a1a, 3px 3px 0 #000;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .logo__icon span {
+      background: #4a2e1e;
+      border: 1px solid #000;
+    }
+    .logo__icon span:nth-child(1) { background: #5D4037; }
+    .logo__icon span:nth-child(2) { background: #7CB342; }
+    .logo__icon span:nth-child(3) { background: #7CB342; }
+    .logo__icon span:nth-child(4) { background: #5D4037; }
+
+    .logo__text {
+      font-family: var(--font-pixel);
+      font-size: 1.3rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: var(--text-main);
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    /* Навигация */
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav__list {
+      display: flex;
+      list-style: none;
+      gap: 4px;
+    }
+
+    .nav__link {
+      display: inline-block;
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border: 2px solid transparent;
+      border-radius: 2px;
+      text-transform: uppercase;
+      transition: all 0.1s;
+      white-space: nowrap;
+    }
+
+    .nav__link:hover,
+    .nav__link:focus-visible {
+      color: var(--text-main);
+      border-color: var(--grass-green);
+      background: #2a3a2a;
+      outline: none;
+    }
+
+    .nav__link.active {
+      color: var(--emerald);
+      border-color: var(--emerald);
+      background: #1a2a1a;
+    }
+
+    .header__cta {
+      margin-left: 16px;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      min-height: 40px;
+    }
+
+    /* Бургер */
+    .burger {
+      display: none;
+      background: transparent;
+      border: 2px solid var(--grass-green);
+      padding: 8px 10px;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      border-radius: 2px;
+      min-height: 44px;
+      min-width: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .burger span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: var(--grass-green);
+      transition: 0.2s;
+    }
+
+    .burger[aria-expanded="true"] span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .burger[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+    .burger[aria-expanded="true"] span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* Мобильное меню */
+    @media (max-width: 767px) {
+      .nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: #1e241e;
+        border: 3px solid var(--dark-green);
+        padding: 16px;
+        margin-top: 12px;
+        border-radius: 2px;
+        box-shadow: 0 8px 0 #0a0f0a;
+      }
+
+      .nav.open {
+        display: flex;
+      }
+
+      .nav__list {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .nav__link {
+        font-size: 1rem;
+        padding: 12px;
+        text-align: center;
+        border: 2px solid var(--border-light);
+      }
+
+      .header__cta {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+      }
+
+      .burger {
+        display: flex;
+      }
+
+      .header__inner {
+        flex-wrap: wrap;
+      }
+
+      .logo__text {
+        font-size: 1rem;
+      }
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      position: relative;
+      padding: 80px 0 100px;
+      background: linear-gradient(180deg, #0f140f 0%, #1e2a1e 100%);
+      overflow: hidden;
+      border-bottom: 6px solid var(--dark-green);
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+    }
+
+    .hero__title {
+      font-family: var(--font-pixel);
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: var(--text-main);
+      text-shadow: 4px 4px 0 #000, 8px 8px 0 #1a3a1a;
+      margin-bottom: 16px;
+    }
+
+    .hero__title span {
+      color: var(--emerald);
+      display: block;
+      font-size: 0.9em;
+    }
+
+    .hero__desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      max-width: 550px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 12px 16px;
+      border-left: 4px solid var(--emerald);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Декоративные блоки в hero */
+    .hero__decor {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cube {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: var(--brown);
+      border: 3px solid #3a2518;
+      box-shadow: inset -6px -6px 0 #2a1a10, 4px 4px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .cube--grass {
+      background: var(--grass-green);
+      border-color: #4a7a2a;
+      box-shadow: inset -6px -6px 0 #3a6a1a, 4px 4px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .cube--stone {
+      background: #7a7a7a;
+      border-color: #4a4a4a;
+      box-shadow: inset -6px -6px 0 #5a5a5a, 4px 4px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .cube--diamond {
+      background: #4dd0e1;
+      border-color: #00838f;
+      box-shadow: inset -6px -6px 0 #00acc1, 4px 4px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .cube:nth-child(1) { top: 10%; left: 5%; transform: rotate(15deg) scale(0.8); }
+    .cube:nth-child(2) { top: 60%; left: 15%; transform: rotate(-10deg) scale(1.2); }
+    .cube:nth-child(3) { top: 20%; right: 10%; transform: rotate(25deg) scale(1.1); }
+    .cube:nth-child(4) { bottom: 10%; right: 20%; transform: rotate(-15deg) scale(0.9); }
+    .cube:nth-child(5) { top: 45%; left: 45%; transform: rotate(45deg) scale(0.6); opacity: 0.5; }
+    .cube:nth-child(6) { bottom: 30%; left: 70%; transform: rotate(10deg) scale(0.7); }
+
+    /* ---------- СЕКЦИЯ ВОЗМОЖНОСТЕЙ (4 карточки) ---------- */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 3px solid var(--dark-green);
+      border-radius: 2px;
+      padding: 24px 20px;
+      box-shadow: 6px 6px 0 #0a0f0a;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-card:hover,
+    .feature-card:focus-within {
+      transform: translate(-3px, -3px);
+      border-color: var(--emerald);
+      box-shadow: 9px 9px 0 #0a0f0a;
+    }
+
+    .feature-card__icon {
+      font-size: 2.5rem;
+      line-height: 1;
+      background: #1a2a1a;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--grass-green);
+      border-radius: 2px;
+      box-shadow: inset -3px -3px 0 #0a1a0a;
+    }
+
+    .feature-card__title {
+      font-family: var(--font-pixel);
+      font-size: 1.2rem;
+      color: var(--grass-green);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .feature-card__desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* ---------- МОБЫ (сетка) ---------- */
+    .mobs-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .mobs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .mobs-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .mob-card {
+      background: #222222;
+      border: 3px solid #3a4a3a;
+      border-radius: 2px;
+      padding: 20px;
+      box-shadow: 5px 5px 0 #0a0f0a;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mob-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--emerald);
+    }
+
+    .mob-card--creeper::before { background: #4caf50; }
+    .mob-card--zombie::before { background: #2e7d32; }
+    .mob-card--skeleton::before { background: #bdbdbd; }
+    .mob-card--enderman::before { background: #7b1fa2; }
+    .mob-card--golem::before { background: #b0bec5; }
+    .mob-card--dragon::before { background: #4a148c; }
+
+    .mob-card:hover {
+      border-color: var(--grass-green);
+      transform: translateY(-3px);
+    }
+
+    .mob-card__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mob-card__icon {
+      font-size: 2.2rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      border: 2px solid #3a4a3a;
+    }
+
+    .mob-card__name {
+      font-family: var(--font-pixel);
+      font-size: 1.2rem;
+      color: var(--text-main);
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .mob-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .mob-card__trait {
+      font-size: 0.85rem;
+      color: var(--gold);
+      border-top: 1px dashed #3a4a3a;
+      padding-top: 8px;
+      margin-top: auto;
+      font-style: italic;
+    }
+
+    /* ---------- РЕЖИМЫ ИГРЫ ---------- */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .modes-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .modes-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .mode-card {
+      background: #1e2a1e;
+      border: 3px solid var(--dark-green);
+      border-radius: 2px;
+      padding: 20px;
+      box-shadow: 5px 5px 0 #0a0f0a;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mode-card__icon {
+      font-size: 2.5rem;
+    }
+
+    .mode-card__title {
+      font-family: var(--font-pixel);
+      font-size: 1.2rem;
+      color: var(--emerald);
+      text-transform: uppercase;
+    }
+
+    .mode-card__desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .mode-card__visual {
+      height: 6px;
+      background: var(--grass-green);
+      width: 60%;
+      border-radius: 0;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    /* ---------- РЕСУРСЫ ---------- */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .resources-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .resources-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .resource-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #222222;
+      border: 3px solid;
+      border-color: var(--accent, #3a4a3a);
+      border-radius: 2px;
+      padding: 16px;
+      box-shadow: 4px 4px 0 #0a0f0a;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .resource-card:hover {
+      transform: translate(-2px, -2px);
+      border-color: color-mix(in srgb, var(--accent, #3a4a3a), white 35%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #3a4a3a), transparent 75%), 4px 4px 0 #0a0f0a;
+    }
+
+    .resource-card__icon {
+      font-size: 2.2rem;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      border: 2px solid;
+      flex-shrink: 0;
+    }
+
+    .resource-card__info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .resource-card__name {
+      font-family: var(--font-pixel);
+      font-size: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .resource-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* ---------- ИНТЕРАКТИВНЫЙ ВЕРСТАК ---------- */
+    .crafting-section {
+      background: #1a1a1a;
+      border: 3px solid var(--dark-green);
+      border-radius: 2px;
+      padding: 24px 16px;
+      box-shadow: 8px 8px 0 #0a0f0a;
+      margin-top: 24px;
+    }
+
+    .crafting-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .crafting-panel {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .crafting-left {
+        flex: 2;
+      }
+      .crafting-right {
+        flex: 1;
+      }
+    }
+
+    .crafting-left {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .recipe-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .recipe-btn {
+      font-family: var(--font-pixel);
+      font-size: 0.8rem;
+      background: #2a2a2a;
+      border: 2px solid #4a5a4a;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.1s;
+      text-transform: uppercase;
+      flex: 1 1 auto;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    .recipe-btn:hover,
+    .recipe-btn:focus-visible {
+      border-color: var(--emerald);
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .recipe-btn.active {
+      background: var(--dark-green);
+      border-color: var(--gold);
+      color: #fff;
+    }
+
+    /* Сетка крафта */
+    .crafting-grid-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 64px);
+      grid-template-rows: repeat(3, 64px);
+      gap: 4px;
+      background: #0a0a0a;
+      border: 3px solid #5D4037;
+      padding: 8px;
+      box-shadow: inset -4px -4px 0 #2a1a10, 4px 4px 0 #000;
+    }
+
+    .slot {
+      width: 64px;
+      height: 64px;
+      background: #1e1e1e;
+      border: 2px solid #3a3a3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+      user-select: none;
+      position: relative;
+      border-radius: 1px;
+    }
+
+    .slot:hover,
+    .slot:focus-visible {
+      border-color: var(--emerald);
+      background: #2a3a2a;
+      outline: none;
+    }
+
+    .slot.empty {
+      background: #141414;
+      border-style: dashed;
+      border-color: #2a2a2a;
+    }
+
+    .arrow {
+      font-size: 2.5rem;
+      color: var(--grass-green);
+      text-shadow: 2px 2px 0 #000;
+      padding: 0 4px;
+    }
+
+    .result-slot {
+      width: 72px;
+      height: 72px;
+      background: #1e1e1e;
+      border: 3px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: inset -4px -4px 0 #2a1a10, 4px 4px 0 #000;
+    }
+
+    .result-slot:hover,
+    .result-slot:focus-visible {
+      border-color: var(--emerald);
+      outline: none;
+    }
+
+    .result-count {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-size: 0.9rem;
+      font-family: var(--font-pixel);
+      color: var(--gold);
+      background: #000;
+      padding: 0 4px;
+      border: 1px solid #000;
+    }
+
+    .crafting-info {
+      background: #222;
+      border: 2px solid #3a4a3a;
+      padding: 16px;
+      min-height: 100px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      border-radius: 2px;
+      margin-top: 16px;
+    }
+
+    .crafting-info strong {
+      color: var(--emerald);
+      font-family: var(--font-pixel);
+    }
+
+    .crafting-hint {
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    /* ---------- СОВЕТЫ ---------- */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .tips-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .tips-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .tip-card {
+      background: #1e2a1e;
+      border-left: 6px solid var(--gold);
+      border-radius: 2px;
+      padding: 16px;
+      box-shadow: 4px 4px 0 #0a0f0a;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .tip-card__icon {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .tip-card__content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tip-card__title {
+      font-family: var(--font-pixel);
+      font-size: 1rem;
+      color: var(--grass-green);
+    }
+
+    .tip-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer {
+      background: #0f140f;
+      border-top: 4px solid var(--dark-green);
+      padding: 32px 0 24px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 768px) {
+      .footer__grid { grid-template-columns: 2fr 1fr 1fr; }
+    }
+
+    .footer__logo {
+      font-family: var(--font-pixel);
+      font-size: 1.4rem;
+      color: var(--grass-green);
+      margin-bottom: 12px;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .footer__desc {
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    .footer__links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer__links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px dashed transparent;
+      transition: color 0.1s, border-color 0.1s;
+      display: inline-block;
+      padding: 4px 0;
+    }
+
+    .footer__links a:hover,
+    .footer__links a:focus-visible {
+      color: var(--emerald);
+      border-bottom-color: var(--emerald);
+      outline: none;
+    }
+
+    .footer__copyright {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #2a3a2a;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #7a8a7a;
+    }
+
+    /* ---------- КНОПКА НАВЕРХ ---------- */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 52px;
+      height: 52px;
+      background: var(--dark-green);
+      color: #fff;
+      border: 3px solid var(--grass-green);
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: opacity 0.2s, transform 0.2s;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      border-radius: 2px;
+      font-family: var(--font-pixel);
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover,
+    .back-to-top:focus-visible {
+      background: var(--grass-green);
+      border-color: var(--gold);
+      transform: translate(-2px, -2px);
+      outline: none;
+    }
+
+    /* ---------- АНИМАЦИИ ПОЯВЛЕНИЯ ---------- */
+    .fade-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .fade-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-section {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    /* ---------- ФОКУС ---------- */
+    :focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* ---------- СКРЫТИЕ ГОРИЗОНТАЛЬНОГО СКРОЛЛА ---------- */
+    body, .container {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    /* ---------- ДОПОЛНИТЕЛЬНО ДЛЯ ВЕРСТАКА ---------- */
+    .crafting-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .crafting-right h4 {
+      font-family: var(--font-pixel);
+      color: var(--grass-green);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ШАПКА -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="logo" aria-label="Minecraft World — на главную">
+        <div class="logo__icon" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <span class="logo__text">Minecraft World</span>
+      </a>
+
+      <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="main-nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a href="#features" class="nav__link">Возможности</a></li>
+          <li><a href="#mobs" class="nav__link">Мобы</a></li>
+          <li><a href="#modes" class="nav__link">Режимы</a></li>
+          <li><a href="#resources" class="nav__link">Ресурсы</a></li>
+          <li><a href="#crafting" class="nav__link">Верстак</a></li>
+          <li><a href="#tips" class="nav__link">Советы</a></li>
+        </ul>
+        <a href="#features" class="btn header__cta">Начать исследование</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero__decor" aria-hidden="true">
+        <div class="cube cube--grass"></div>
+        <div class="cube cube--stone"></div>
+        <div class="cube cube--diamond"></div>
+        <div class="cube"></div>
+        <div class="cube cube--grass"></div>
+        <div class="cube cube--stone"></div>
+      </div>
+      <div class="container hero__content">
+        <h1 class="hero__title">
+          Minecraft World
+          <span>твой мир, твои правила</span>
+        </h1>
+        <p class="hero__desc">
+          Погрузись в бесконечный мир блоков, где можно строить, исследовать, выживать и создавать. 
+          Узнай о мобах, режимах, ресурсах и секретах крафта.
+        </p>
+        <div class="hero__actions">
+          <a href="#features" class="btn btn--gold">Исследовать мир</a>
+          <a href="#tips" class="btn btn--outline">Советы новичкам</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- О MINECRAFT И ВОЗМОЖНОСТЯХ -->
+    <section class="section fade-section" id="features">
+      <div class="container">
+        <h2 class="section-title">О Minecraft и его возможностях</h2>
+        <div class="features-grid">
+          <article class="feature-card" tabindex="0">
+            <div class="feature-card__icon">⛏️</div>
+            <h3 class="feature-card__title">Выживание</h3>
+            <p class="feature-card__desc">Сбор ресурсов, создание инструментов, строительство убежища и борьба с опасностями.</p>
+          </article>
+          <article class="feature-card" tabindex="0">
+            <div class="feature-card__icon">🏗️</div>
+            <h3 class="feature-card__title">Креатив</h3>
+            <p class="feature-card__desc">Свободное строительство и создание масштабных сооружений без ограничений.</p>
+          </article>
+          <article class="feature-card" tabindex="0">
+            <div class="feature-card__icon">👥</div>
+            <h3 class="feature-card__title">Мультиплеер</h3>
+            <p class="feature-card__desc">Совместная игра с друзьями, серверы и командные приключения.</p>
+          </article>
+          <article class="feature-card" tabindex="0">
+            <div class="feature-card__icon">🗺️</div>
+            <h3 class="feature-card__title">Исследования</h3>
+            <p class="feature-card__desc">Изучение биомов, пещер, структур и измерений.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- МОБЫ И СУЩЕСТВА -->
+    <section class="section fade-section" id="mobs">
+      <div class="container">
+        <h2 class="section-title">Мобы и существа</h2>
+        <div class="mobs-grid">
+          <article class="mob-card mob-card--creeper" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">💥</span>
+              <h3 class="mob-card__name">Крипер</h3>
+            </div>
+            <p class="mob-card__desc">Зелёный взрывной моб, который тихо подкрадывается и взрывается рядом с игроком.</p>
+            <p class="mob-card__trait">Особенность: взрыв разрушает блоки и наносит большой урон.</p>
+          </article>
+          <article class="mob-card mob-card--zombie" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">🧟</span>
+              <h3 class="mob-card__name">Зомби</h3>
+            </div>
+            <p class="mob-card__desc">Враждебный моб, который преследует игрока и атакует в ближнем бою.</p>
+            <p class="mob-card__trait">Особенность: горит на солнце, боится дневного света.</p>
+          </article>
+          <article class="mob-card mob-card--skeleton" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">🏹</span>
+              <h3 class="mob-card__name">Скелет</h3>
+            </div>
+            <p class="mob-card__desc">Стреляет из лука и держит дистанцию. Опасен в открытых пространствах.</p>
+            <p class="mob-card__trait">Особенность: может подобрать и надеть броню.</p>
+          </article>
+          <article class="mob-card mob-card--enderman" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">🌌</span>
+              <h3 class="mob-card__name">Эндермен</h3>
+            </div>
+            <p class="mob-card__desc">Высокий тёмный моб, телепортируется и атакует, если на него посмотреть.</p>
+            <p class="mob-card__trait">Особенность: не любит воду и может переносить блоки.</p>
+          </article>
+          <article class="mob-card mob-card--golem" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">🤖</span>
+              <h3 class="mob-card__name">Железный голем</h3>
+            </div>
+            <p class="mob-card__desc">Дружелюбный защитник деревни. Атакует враждебных мобов.</p>
+            <p class="mob-card__trait">Особенность: создаётся из железных блоков и тыквы.</p>
+          </article>
+          <article class="mob-card mob-card--dragon" tabindex="0">
+            <div class="mob-card__header">
+              <span class="mob-card__icon">🐉</span>
+              <h3 class="mob-card__name">Эндер-дракон</h3>
+            </div>
+            <p class="mob-card__desc">Финальный босс Края. Летает и восстанавливает здоровье с помощью кристаллов.</p>
+            <p class="mob-card__trait">Особенность: после победы открывает портал домой.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- РЕЖИМЫ ИГРЫ -->
+    <section class="section fade-section" id="modes">
+      <div class="container">
+        <h2 class="section-title">Режимы игры</h2>
+        <div class="modes-grid">
+          <article class="mode-card" tabindex="0">
+            <div class="mode-card__icon">⚔️</div>
+            <h3 class="mode-card__title">Выживание</h3>
+            <p class="mode-card__desc">Сбор ресурсов, крафт, здоровье и голод. Классический режим с добычей и опасностями.</p>
+            <div class="mode-card__visual"></div>
+          </article>
+          <article class="mode-card" tabindex="0">
+            <div class="mode-card__icon">🎨</div>
+            <h3 class="mode-card__title">Креатив</h3>
+            <p class="mode-card__desc">Свободное строительство и доступ к блокам. Полёт и бесконечные ресурсы.</p>
+            <div class="mode-card__visual" style="background: var(--gold);"></div>
+          </article>
+          <article class="mode-card" tabindex="0">
+            <div class="mode-card__icon">💀</div>
+            <h3 class="mode-card__title">Хардкор</h3>
+            <p class="mode-card__desc">Повышенная сложность и серьёзные последствия гибели персонажа. Одна жизнь.</p>
+            <div class="mode-card__visual" style="background: #d32f2f;"></div>
+          </article>
+          <article class="mode-card" tabindex="0">
+            <div class="mode-card__icon">📜</div>
+            <h3 class="mode-card__title">Приключение</h3>
+            <p class="mode-card__desc">Прохождение карт с ограничениями на взаимодействие с блоками.</p>
+            <div class="mode-card__visual" style="background: #7b1fa2;"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- РЕСУРСЫ И БЛОКИ -->
+    <section class="section fade-section" id="resources">
+      <div class="container">
+        <h2 class="section-title">Ресурсы и блоки</h2>
+        <div class="resources-grid">
+          <article class="resource-card" style="--accent: #4dd0e1;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #4dd0e1;">💎</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #4dd0e1;">Алмаз</h3>
+              <p class="resource-card__desc">Прочный ресурс для лучших инструментов и брони.</p>
+            </div>
+          </article>
+          <article class="resource-card" style="--accent: #FFC107;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #FFC107;">🥇</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #FFC107;">Золото</h3>
+              <p class="resource-card__desc">Используется для часов, рельс и золотых яблок.</p>
+            </div>
+          </article>
+          <article class="resource-card" style="--accent: #d32f2f;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #d32f2f;">🔴</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #d32f2f;">Редстоун</h3>
+              <p class="resource-card__desc">Основа для механизмов, схем и автоматизации.</p>
+            </div>
+          </article>
+          <article class="resource-card" style="--accent: #8d6e63;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #8d6e63;">🪵</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #8d6e63;">Дерево</h3>
+              <p class="resource-card__desc">Базовый ресурс для первых инструментов и построек.</p>
+            </div>
+          </article>
+          <article class="resource-card" style="--accent: #9e9e9e;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #9e9e9e;">⚙️</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #9e9e9e;">Железо</h3>
+              <p class="resource-card__desc">Ключевой металл для брони, инструментов и механизмов.</p>
+            </div>
+          </article>
+          <article class="resource-card" style="--accent: #4a148c;" tabindex="0">
+            <div class="resource-card__icon" style="border-color: #4a148c;">⬛</div>
+            <div class="resource-card__info">
+              <h3 class="resource-card__name" style="color: #b39ddb;">Обсидиан</h3>
+              <p class="resource-card__desc">Очень прочный блок, необходим для порталов в Нижний мир.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ИНТЕРАКТИВНЫЙ ВЕРСТАК -->
+    <section class="section fade-section" id="crafting">
+      <div class="container">
+        <h2 class="section-title">Интерактивный верстак</h2>
+        <div class="crafting-section">
+          <p style="margin-bottom: 16px; color: var(--text-secondary);">
+            Выбери рецепт, и сетка 3×3 заполнится нужными ингредиентами. Нажми на любой слот, чтобы узнать о предмете.
+          </p>
+
+          <ul class="recipe-list" id="recipeList" role="list"></ul>
+
+          <div class="crafting-panel">
+            <div class="crafting-left">
+              <div class="crafting-grid-wrapper">
+                <div class="grid-3x3" id="craftingGrid" role="grid" aria-label="Сетка крафта 3 на 3"></div>
+                <div class="arrow" aria-hidden="true">➡️</div>
+                <div class="result-slot" id="resultSlot" role="button" tabindex="0" aria-label="Результат крафта">
+                  <span id="resultIcon" style="font-size: 2rem;"></span>
+                  <span class="result-count" id="resultCount"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="crafting-right">
+              <h4>📋 Информация</h4>
+              <div class="crafting-info" id="craftingInfo" aria-live="polite">
+                <p class="crafting-hint">Выбери рецепт из списка выше, чтобы увидеть ингредиенты и результат.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- СОВЕТЫ ДЛЯ НОВИЧКОВ -->
+    <section class="section fade-section" id="tips">
+      <div class="container">
+        <h2 class="section-title">Советы для новичков</h2>
+        <div class="tips-grid">
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">🌙</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Пережить первую ночь</h3>
+              <p class="tip-card__desc">Постройте простое укрытие из земли или дерева до захода солнца. Поставьте факелы, чтобы отпугнуть враждебных мобов.</p>
+            </div>
+          </article>
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">⛏️</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Деревянная кирка</h3>
+              <p class="tip-card__desc">Сразу после дерева сделайте кирку — она откроет доступ к камню и рудам. Без неё вы не сможете добывать камень.</p>
+            </div>
+          </article>
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">🔥</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Освещайте убежище</h3>
+              <p class="tip-card__desc">Факелы и фонари предотвращают появление монстров внутри базы. Свет — ваша главная защита ночью.</p>
+            </div>
+          </article>
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">⛓️</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Добыча железа</h3>
+              <p class="tip-card__desc">Железо находится на высоте от 5 до 60. Используйте каменную кирку. Из железа делайте броню, мечи и инструменты.</p>
+            </div>
+          </article>
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">🍖</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Запасайтесь едой</h3>
+              <p class="tip-card__desc">Голод уменьшает здоровье и не даёт бежать. Жарьте мясо и держите запас еды в инвентаре.</p>
+            </div>
+          </article>
+          <article class="tip-card" tabindex="0">
+            <span class="tip-card__icon">🕯️</span>
+            <div class="tip-card__content">
+              <h3 class="tip-card__title">Пещеры: подготовка</h3>
+              <p class="tip-card__desc">Возьмите факелы, еду, оружие и блоки для застройки. Ставьте метки, чтобы не заблудиться.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ПОДВАЛ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__logo">Minecraft World</div>
+          <p class="footer__desc">
+            Неофициальный информационный сайт, посвящённый игре Minecraft. 
+            Здесь вы найдёте полезные советы, описания мобов, режимов и ресурсов.
+          </p>
+        </div>
+        <div>
+          <h4 style="font-family: var(--font-pixel); color: var(--grass-green); margin-bottom: 12px;">Разделы</h4>
+          <ul class="footer__links">
+            <li><a href="#features">Возможности</a></li>
+            <li><a href="#mobs">Мобы</a></li>
+            <li><a href="#modes">Режимы</a></li>
+            <li><a href="#resources">Ресурсы</a></li>
+            <li><a href="#crafting">Верстак</a></li>
+            <li><a href="#tips">Советы</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-family: var(--font-pixel); color: var(--grass-green); margin-bottom: 12px;">Ссылки</h4>
+          <ul class="footer__links">
+            <li><a href="https://www.minecraft.net/" target="_blank" rel="noopener noreferrer">Официальный сайт Minecraft</a></li>
+            <li><a href="#hero">Наверх</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__copyright">
+        © 2025 Minecraft World — неофициальный информационный проект. Minecraft является товарным знаком Mojang Studios.
+      </div>
+    </div>
+  </footer>
+
+  <!-- КНОПКА НАВЕРХ -->
+  <a href="#" class="back-to-top" id="backToTop" aria-label="Вернуться наверх">↑</a>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ---------- ПЕРЕМЕННЫЕ ----------
+      const burger = document.getElementById('burger');
+      const nav = document.getElementById('main-nav');
+      const navLinks = document.querySelectorAll('.nav__link');
+      const backToTop = document.getElementById('backToTop');
+      const sections = document.querySelectorAll('.fade-section');
+      const headerHeight = 76;
+
+      // ---------- МОБИЛЬНОЕ МЕНЮ ----------
+      if (burger && nav) {
+        burger.addEventListener('click', function() {
+          const expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', String(!expanded));
+          nav.classList.toggle('open');
+        });
+
+        // Закрыть меню при клике по ссылке
+        navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (nav.classList.contains('open')) {
+              nav.classList.remove('open');
+              burger.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+
+        // Закрыть меню при клике вне его
+        document.addEventListener('click', function(e) {
+          if (nav.classList.contains('open') && 
+              !nav.contains(e.target) && 
+              !burger.contains(e.target)) {
+            nav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      // ---------- ПОДСВЕТКА АКТИВНОГО ПУНКТА МЕНЮ ----------
+      const observerOptions = {
+        root: null,
+        rootMargin: `-${headerHeight}px 0px -50% 0px`,
+        threshold: 0
+      };
+
+      const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            navLinks.forEach(link => {
+              link.classList.remove('active');
+              if (link.getAttribute('href') === `#${id}`) {
+                link.classList.add('active');
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('section[id]').forEach(section => {
+        navObserver.observe(section);
+      });
+
+      // ---------- АНИМАЦИЯ ПОЯВЛЕНИЯ СЕКЦИЙ ----------
+      const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      sections.forEach(section => {
+        fadeObserver.observe(section);
+      });
+
+      // ---------- КНОПКА НАВЕРХ ----------
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+
+      backToTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // ---------- ИНТЕРАКТИВНЫЙ ВЕРСТАК ----------
+      // Определения предметов
+      const items = {
+        oak_log: { icon: '🪵', name: 'Дубовое бревно', desc: 'Базовый ресурс, из которого получают доски.' },
+        oak_planks: { icon: '🟫', name: 'Дубовые доски', desc: 'Материал для крафта и строительства.' },
+        crafting_table: { icon: '🛠️', name: 'Верстак', desc: 'Открывает доступ к крафту 3×3.' },
+        stick: { icon: '🥢', name: 'Палка', desc: 'Используется для создания инструментов и факелов.' },
+        coal: { icon: '⚫', name: 'Уголь', desc: 'Топливо и материал для факелов.' },
+        charcoal: { icon: '🌑', name: 'Древесный уголь', desc: 'Альтернатива углю, получается из дерева.' },
+        torch: { icon: '🔥', name: 'Факел', desc: 'Освещает территорию и отпугивает мобов.' }
+      };
+
+      // Рецепты
+      const recipes = [
+        {
+          id: 'planks',
+          name: 'Доски из бревна',
+          description: 'Одно бревно даёт 4 доски.',
+          grid: [
+            [null, null, null],
+            [null, 'oak_log', null],
+            [null, null, null]
+          ],
+          result: { item: 'oak_planks', count: 4 }
+        },
+        {
+          id: 'crafting_table',
+          name: 'Верстак',
+          description: 'Четыре доски в форме квадрата 2×2.',
+          grid: [
+            ['oak_planks', 'oak_planks', null],
+            ['oak_planks', 'oak_planks', null],
+            [null, null, null]
+          ],
+          result: { item: 'crafting_table', count: 1 }
+        },
+        {
+          id: 'sticks',
+          name: 'Палки',
+          description: 'Две доски вертикально.',
+          grid: [
+            [null, 'oak_planks', null],
+            [null, 'oak_planks', null],
+            [null, null, null]
+          ],
+          result: { item: 'stick', count: 4 }
+        },
+        {
+          id: 'torch',
+          name: 'Факел',
+          description: 'Уголь и палка вертикально.',
+          grid: [
+            [null, 'coal', null],
+            [null, 'stick', null],
+            [null, null, null]
+          ],
+          result: { item: 'torch', count: 4 }
+        }
+      ];
+
+      // DOM элементы верстака
+      const craftingGrid = document.getElementById('craftingGrid');
+      const resultSlot = document.getElementById('resultSlot');
+      const resultIcon = document.getElementById('resultIcon');
+      const resultCount = document.getElementById('resultCount');
+      const recipeList = document.getElementById('recipeList');
+      const craftingInfo = document.getElementById('craftingInfo');
+
+      let currentRecipe = null;
+
+      // Создание сетки 3x3
+      function buildGrid() {
+        if (!craftingGrid) return;
+        craftingGrid.innerHTML = '';
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 3; col++) {
+            const slot = document.createElement('div');
+            slot.className = 'slot empty';
+            slot.dataset.row = row;
+            slot.dataset.col = col;
+            slot.setAttribute('role', 'button');
+            slot.setAttribute('tabindex', '0');
+            slot.setAttribute('aria-label', `Ячейка ${row * 3 + col + 1}`);
+            slot.addEventListener('click', () => handleSlotClick(slot));
+            slot.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSlotClick(slot);
+              }
+            });
+            craftingGrid.appendChild(slot);
+          }
+        }
+      }
+
+      // Обновить сетку по рецепту
+      function renderRecipe(recipe) {
+        currentRecipe = recipe;
+        const slots = craftingGrid.querySelectorAll('.slot');
+        slots.forEach((slot, index) => {
+          const row = Math.floor(index / 3);
+          const col = index % 3;
+          const itemKey = recipe.grid[row]?.[col];
+          if (itemKey && items[itemKey]) {
+            slot.textContent = items[itemKey].icon;
+            slot.dataset.item = itemKey;
+            slot.classList.remove('empty');
+          } else {
+            slot.textContent = '';
+            delete slot.dataset.item;
+            slot.classList.add('empty');
+          }
+        });
+
+        // Результат
+        if (recipe.result) {
+          const { item, count } = recipe.result;
+          resultIcon.textContent = items[item]?.icon || '❓';
+          resultCount.textContent = count > 1 ? `×${count}` : '';
+          resultSlot.dataset.item = item;
+        }
+
+        // Подсветка выбранного рецепта
+        document.querySelectorAll('.recipe-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.recipeId === recipe.id);
+        });
+
+        // Информация
+        craftingInfo.innerHTML = `<p><strong>${recipe.name}</strong></p><p>${recipe.description}</p><p class="crafting-hint">Нажми на любой слот, чтобы узнать о предмете.</p>`;
+      }
+
+      // Обработка клика по слоту
+      function handleSlotClick(slot) {
+        const itemKey = slot.dataset.item;
+        if (itemKey && items[itemKey]) {
+          const item = items[itemKey];
+          craftingInfo.innerHTML = `
+            <p><strong>${item.name}</strong></p>
+            <p>${item.desc}</p>
+            <p class="crafting-hint">Иконка: ${item.icon}</p>
+          `;
+        } else {
+          craftingInfo.innerHTML = '<p class="crafting-hint">Пустая ячейка. Выберите рецепт или нажмите на предмет.</p>';
+        }
+      }
+
+      // Инициализация списка рецептов
+      function initRecipeList() {
+        if (!recipeList) return;
+        recipeList.innerHTML = '';
+        recipes.forEach(recipe => {
+          const li = document.createElement('li');
+          const btn = document.createElement('button');
+          btn.className = 'recipe-btn';
+          btn.dataset.recipeId = recipe.id;
+          btn.textContent = recipe.name;
+          btn.setAttribute('aria-label', `Рецепт: ${recipe.name}`);
+          btn.addEventListener('click', () => {
+            renderRecipe(recipe);
+          });
+          li.appendChild(btn);
+          recipeList.appendChild(li);
+        });
+      }
+
+      // Инициализация верстака
+      if (craftingGrid) {
+        buildGrid();
+        initRecipeList();
+
+        // Выбрать первый рецепт по умолчанию
+        if (recipes.length > 0) {
+          renderRecipe(recipes[0]);
+        }
+
+        // Клик по слоту результата
+        resultSlot.addEventListener('click', () => {
+          const itemKey = resultSlot.dataset.item;
+          if (itemKey && items[itemKey]) {
+            const item = items[itemKey];
+            craftingInfo.innerHTML = `
+              <p><strong>${item.name}</strong></p>
+              <p>${item.desc}</p>
+              <p class="crafting-hint">Результат крафта: ${currentRecipe?.result?.count || 1} шт.</p>
+            `;
+          }
+        });
+
+        resultSlot.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            resultSlot.click();
+          }
+        });
+      }
+
+      // ---------- ПЛАВНАЯ ПРОКРУТКА ДЛЯ ЯКОРЕЙ (дополнительно) ----------
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (href === '#') return;
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            const offsetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+            window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+          }
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
