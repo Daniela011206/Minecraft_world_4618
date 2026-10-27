@@ -544,6 +544,18 @@
       border: 2px solid #3a4a3a;
     }
 
+    .mob-card__img {
+      display: block;
+      width: calc(100% + 40px);
+      height: 200px;
+      object-fit: contain;
+      object-position: center;
+      margin: -20px -20px 12px;
+      padding: 6px;
+      background: #141a14;
+      border-bottom: 3px solid #3a4a3a;
+    }
+
     .mob-card__name {
       font-family: var(--font-pixel);
       font-size: 1.2rem;
@@ -656,6 +668,14 @@
       background: #1a1a1a;
       border: 2px solid;
       flex-shrink: 0;
+    }
+
+    .resource-card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+      display: block;
     }
 
     .resource-card__info {
@@ -835,6 +855,15 @@
       border: 1px solid #000;
     }
 
+    .slot__img,
+    .result-slot__img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 6px;
+      display: block;
+    }
+
     .crafting-info {
       background: #222;
       border: 2px solid #3a4a3a;
@@ -855,6 +884,14 @@
       color: var(--gold);
       font-size: 0.85rem;
       font-style: italic;
+    }
+
+    .hint-icon {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      vertical-align: middle;
+      margin-right: 6px;
     }
 
     /* ---------- СОВЕТЫ ---------- */
@@ -1052,6 +1089,23 @@
       color: var(--grass-green);
       text-transform: uppercase;
     }
+
+    /* ---------- ИЗОБРАЖЕНИЯ: АДАПТИВНОСТЬ ---------- */
+    @media (max-width: 767px) {
+      .mob-card__img {
+        height: 160px;
+      }
+
+      .resource-card__icon {
+        width: 52px;
+        height: 52px;
+      }
+
+      .slot__img,
+      .result-slot__img {
+        padding: 4px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1147,49 +1201,49 @@
         <div class="mobs-grid">
           <article class="mob-card mob-card--creeper" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">💥</span>
               <h3 class="mob-card__name">Крипер</h3>
             </div>
+            <img class="mob-card__img" src="images/сreeper.png" alt="Крипер" loading="lazy">
             <p class="mob-card__desc">Зелёный взрывной моб, который тихо подкрадывается и взрывается рядом с игроком.</p>
             <p class="mob-card__trait">Особенность: взрыв разрушает блоки и наносит большой урон.</p>
           </article>
           <article class="mob-card mob-card--zombie" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">🧟</span>
               <h3 class="mob-card__name">Зомби</h3>
             </div>
+            <img class="mob-card__img" src="images/zombie.png" alt="Зомби" loading="lazy">
             <p class="mob-card__desc">Враждебный моб, который преследует игрока и атакует в ближнем бою.</p>
             <p class="mob-card__trait">Особенность: горит на солнце, боится дневного света.</p>
           </article>
           <article class="mob-card mob-card--skeleton" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">🏹</span>
               <h3 class="mob-card__name">Скелет</h3>
             </div>
+            <img class="mob-card__img" src="images/skeleton.png" alt="Скелет" loading="lazy">
             <p class="mob-card__desc">Стреляет из лука и держит дистанцию. Опасен в открытых пространствах.</p>
             <p class="mob-card__trait">Особенность: может подобрать и надеть броню.</p>
           </article>
           <article class="mob-card mob-card--enderman" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">🌌</span>
               <h3 class="mob-card__name">Эндермен</h3>
             </div>
+            <img class="mob-card__img" src="images/enderman.png" alt="Эндермен" loading="lazy">
             <p class="mob-card__desc">Высокий тёмный моб, телепортируется и атакует, если на него посмотреть.</p>
             <p class="mob-card__trait">Особенность: не любит воду и может переносить блоки.</p>
           </article>
           <article class="mob-card mob-card--golem" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">🤖</span>
               <h3 class="mob-card__name">Железный голем</h3>
             </div>
+            <img class="mob-card__img" src="images/golem.png" alt="Железный голем" loading="lazy">
             <p class="mob-card__desc">Дружелюбный защитник деревни. Атакует враждебных мобов.</p>
             <p class="mob-card__trait">Особенность: создаётся из железных блоков и тыквы.</p>
           </article>
           <article class="mob-card mob-card--dragon" tabindex="0">
             <div class="mob-card__header">
-              <span class="mob-card__icon">🐉</span>
               <h3 class="mob-card__name">Эндер-дракон</h3>
             </div>
+            <img class="mob-card__img" src="images/dragon.png" alt="Эндер-дракон" loading="lazy">
             <p class="mob-card__desc">Финальный босс Края. Летает и восстанавливает здоровье с помощью кристаллов.</p>
             <p class="mob-card__trait">Особенность: после победы открывает портал домой.</p>
           </article>
@@ -1236,42 +1290,42 @@
         <h2 class="section-title">Ресурсы и блоки</h2>
         <div class="resources-grid">
           <article class="resource-card" style="--accent: #4dd0e1;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #4dd0e1;">💎</div>
+            <div class="resource-card__icon" style="border-color: #4dd0e1;"><img class="resource-card__img" src="images/diamond.png" alt="Алмаз" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #4dd0e1;">Алмаз</h3>
               <p class="resource-card__desc">Прочный ресурс для лучших инструментов и брони.</p>
             </div>
           </article>
           <article class="resource-card" style="--accent: #FFC107;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #FFC107;">🥇</div>
+            <div class="resource-card__icon" style="border-color: #FFC107;"><img class="resource-card__img" src="images/gold.png" alt="Золото" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #FFC107;">Золото</h3>
               <p class="resource-card__desc">Используется для часов, рельс и золотых яблок.</p>
             </div>
           </article>
           <article class="resource-card" style="--accent: #d32f2f;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #d32f2f;">🔴</div>
+            <div class="resource-card__icon" style="border-color: #d32f2f;"><img class="resource-card__img" src="images/redstone.png" alt="Редстоун" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #d32f2f;">Редстоун</h3>
               <p class="resource-card__desc">Основа для механизмов, схем и автоматизации.</p>
             </div>
           </article>
           <article class="resource-card" style="--accent: #8d6e63;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #8d6e63;">🪵</div>
+            <div class="resource-card__icon" style="border-color: #8d6e63;"><img class="resource-card__img" src="images/log.png" alt="Бревно" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #8d6e63;">Дерево</h3>
               <p class="resource-card__desc">Базовый ресурс для первых инструментов и построек.</p>
             </div>
           </article>
           <article class="resource-card" style="--accent: #9e9e9e;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #9e9e9e;">⚙️</div>
+            <div class="resource-card__icon" style="border-color: #9e9e9e;"><img class="resource-card__img" src="images/iron.png" alt="Железо" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #9e9e9e;">Железо</h3>
               <p class="resource-card__desc">Ключевой металл для брони, инструментов и механизмов.</p>
             </div>
           </article>
           <article class="resource-card" style="--accent: #4a148c;" tabindex="0">
-            <div class="resource-card__icon" style="border-color: #4a148c;">⬛</div>
+            <div class="resource-card__icon" style="border-color: #4a148c;"><img class="resource-card__img" src="images/obsidian.png" alt="Обсидиан" loading="lazy"></div>
             <div class="resource-card__info">
               <h3 class="resource-card__name" style="color: #b39ddb;">Обсидиан</h3>
               <p class="resource-card__desc">Очень прочный блок, необходим для порталов в Нижний мир.</p>
@@ -1398,7 +1452,7 @@
         </div>
       </div>
       <div class="footer__copyright">
-        © 2025 Minecraft World — неофициальный информационный проект. Minecraft является товарным знаком Mojang Studios.
+        © 2026 Minecraft World — неофициальный информационный проект. Minecraft является товарным знаком Mojang Studios.
       </div>
     </div>
   </footer>
@@ -1502,13 +1556,14 @@
       // ---------- ИНТЕРАКТИВНЫЙ ВЕРСТАК ----------
       // Определения предметов
       const items = {
-        oak_log: { icon: '🪵', name: 'Дубовое бревно', desc: 'Базовый ресурс, из которого получают доски.' },
-        oak_planks: { icon: '🟫', name: 'Дубовые доски', desc: 'Материал для крафта и строительства.' },
-        crafting_table: { icon: '🛠️', name: 'Верстак', desc: 'Открывает доступ к крафту 3×3.' },
-        stick: { icon: '🥢', name: 'Палка', desc: 'Используется для создания инструментов и факелов.' },
-        coal: { icon: '⚫', name: 'Уголь', desc: 'Топливо и материал для факелов.' },
+        oak_log: { icon: '🪵', img: 'images/log.png', name: 'Дубовое бревно', desc: 'Базовый ресурс, из которого получают доски.' },
+        oak_planks: { icon: '🟫', img: 'images/Oak_Planks.png', name: 'Дубовые доски', desc: 'Материал для крафта и строительства.' },
+        stick: { icon: '🥢', img: 'images/stick.png', name: 'Палка', desc: 'Используется для создания инструментов и факелов.' },
+        coal: { icon: '⚫', img: 'images/coal.png', name: 'Уголь', desc: 'Топливо и материал для факелов.' },
         charcoal: { icon: '🌑', name: 'Древесный уголь', desc: 'Альтернатива углю, получается из дерева.' },
-        torch: { icon: '🔥', name: 'Факел', desc: 'Освещает территорию и отпугивает мобов.' }
+        torch: { icon: '🔥', img: 'images/torch.png', name: 'Факел', desc: 'Освещает территорию и отпугивает мобов.' },
+        wooden_pickaxe: { icon: '⛏️', img: 'images/pickaxe.png', name: 'Деревянная кирка', desc: 'Инструмент из досок и палок для добычи камня и руд.' },
+        wooden_axe: { icon: '🪓', img: 'images/axe.png', name: 'Деревянный топор', desc: 'Инструмент из досок и палок для быстрой рубки дерева.' }
       };
 
       // Рецепты
@@ -1525,20 +1580,9 @@
           result: { item: 'oak_planks', count: 4 }
         },
         {
-          id: 'crafting_table',
-          name: 'Верстак',
-          description: 'Четыре доски в форме квадрата 2×2.',
-          grid: [
-            ['oak_planks', 'oak_planks', null],
-            ['oak_planks', 'oak_planks', null],
-            [null, null, null]
-          ],
-          result: { item: 'crafting_table', count: 1 }
-        },
-        {
           id: 'sticks',
           name: 'Палки',
-          description: 'Две доски вертикально.',
+          description: 'Две доски вертикально в одном столбце.',
           grid: [
             [null, 'oak_planks', null],
             [null, 'oak_planks', null],
@@ -1549,13 +1593,35 @@
         {
           id: 'torch',
           name: 'Факел',
-          description: 'Уголь и палка вертикально.',
+          description: 'Уголь над палкой.',
           grid: [
             [null, 'coal', null],
             [null, 'stick', null],
             [null, null, null]
           ],
           result: { item: 'torch', count: 4 }
+        },
+        {
+          id: 'wooden_pickaxe',
+          name: 'Деревянная кирка',
+          description: 'Три доски сверху и две палки по центру вниз.',
+          grid: [
+            ['oak_planks', 'oak_planks', 'oak_planks'],
+            [null, 'stick', null],
+            [null, 'stick', null]
+          ],
+          result: { item: 'wooden_pickaxe', count: 1 }
+        },
+        {
+          id: 'wooden_axe',
+          name: 'Деревянный топор',
+          description: 'Доски углом (две сверху слева, одна под ними) и две палки по центру вниз.',
+          grid: [
+            ['oak_planks', 'oak_planks', null],
+            ['oak_planks', 'stick', null],
+            [null, 'stick', null]
+          ],
+          result: { item: 'wooden_axe', count: 1 }
         }
       ];
 
@@ -1603,20 +1669,24 @@
           const col = index % 3;
           const itemKey = recipe.grid[row]?.[col];
           if (itemKey && items[itemKey]) {
-            slot.textContent = items[itemKey].icon;
+            const it = items[itemKey];
+            slot.innerHTML = it.img ? `<img class="slot__img" src="${it.img}" alt="${it.name}" loading="lazy">` : it.icon;
+            slot.setAttribute('aria-label', `${it.name} — ячейка ${index + 1}`);
             slot.dataset.item = itemKey;
             slot.classList.remove('empty');
           } else {
             slot.textContent = '';
             delete slot.dataset.item;
             slot.classList.add('empty');
+            slot.setAttribute('aria-label', `Ячейка ${index + 1}`);
           }
         });
 
         // Результат
         if (recipe.result) {
           const { item, count } = recipe.result;
-          resultIcon.textContent = items[item]?.icon || '❓';
+          const it = items[item];
+          resultIcon.innerHTML = (it && it.img) ? `<img class="result-slot__img" src="${it.img}" alt="${it.name}" loading="lazy">` : (it?.icon || '❓');
           resultCount.textContent = count > 1 ? `×${count}` : '';
           resultSlot.dataset.item = item;
         }
@@ -1635,10 +1705,13 @@
         const itemKey = slot.dataset.item;
         if (itemKey && items[itemKey]) {
           const item = items[itemKey];
+          const iconHtml = item.img
+            ? `<img class="hint-icon" src="${item.img}" alt="${item.name}" loading="lazy">`
+            : item.icon;
           craftingInfo.innerHTML = `
             <p><strong>${item.name}</strong></p>
             <p>${item.desc}</p>
-            <p class="crafting-hint">Иконка: ${item.icon}</p>
+            <p class="crafting-hint">${iconHtml}${item.name}</p>
           `;
         } else {
           craftingInfo.innerHTML = '<p class="crafting-hint">Пустая ячейка. Выберите рецепт или нажмите на предмет.</p>';
@@ -1679,10 +1752,13 @@
           const itemKey = resultSlot.dataset.item;
           if (itemKey && items[itemKey]) {
             const item = items[itemKey];
+            const iconHtml = item.img
+              ? `<img class="hint-icon" src="${item.img}" alt="${item.name}" loading="lazy">`
+              : item.icon;
             craftingInfo.innerHTML = `
               <p><strong>${item.name}</strong></p>
               <p>${item.desc}</p>
-              <p class="crafting-hint">Результат крафта: ${currentRecipe?.result?.count || 1} шт.</p>
+              <p class="crafting-hint">${iconHtml}Результат крафта: ${currentRecipe?.result?.count || 1} шт.</p>
             `;
           }
         });
